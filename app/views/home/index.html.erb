@@ -6,6 +6,19 @@
   <body>
     
     <%= react_component("App") %>
-    <h1>hello</h1>
+  
+ 
+
+    <ul>
+      <% @products.each do |product| %>
+        <li><%= product.title %></li>
+      <% end %>
+    </ul>
+    <ul>
+      <% @customers.each do |customer| %>
+        <li><%= customer.first_name %></li>
+      <% end %>
+    </ul>
+   
   </body>
 </html>
