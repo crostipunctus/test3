@@ -21,6 +21,7 @@ gem 'dotenv-rails'
 gem 'graphql'
 gem 'react-rails'
 gem 'shopify_app'
+gem 'graphql-client'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use Active Model has_secure_password
