@@ -15,6 +15,7 @@ class HomeController < ApplicationController
     @customers = ShopifyAPI::Customer.find(:all, params: { limit: 10 })
     @products = ShopifyAPI::Product.find(:all, params: { limit: 10 })
     token = session.request_token(params)
+    
     client = ShopifyAPI::GraphQL.client
 
     shop_name = client.parse <<-'GRAPHQL'
@@ -25,9 +26,24 @@ class HomeController < ApplicationController
       }
     GRAPHQL
 
-    @result = client.query(shop_name)
     
 
-  
+    customer_name = client.parse <<-'GRAPHQL'
+    mutation {
+      customerUpdate(input: {id: "gid://shopify/Customer/5510479216818", firstName: "kindred"}) {
+        customer {
+          id
+          firstName
+        
+        }
+      }
+    }
+    GRAPHQL
+
+    @result = client.query(customer_name)
+    
+    
+
+    
   end
 end
