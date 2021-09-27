@@ -10,7 +10,7 @@ class HomeController < ApplicationController
   def index
     @shop_origin = current_shopify_domain
     @host = params[:host]
-    session = ShopifyAPI::Session.new(domain: "goobiebuildstest.myshopify.com", token: Shop.first.shopify_token, api_version: "2021-07")
+    session = ShopifyAPI::Session.new(domain: "goobiebuildstest.myshopify.com", token: Shop.first.shopify_token, api_version: "2021-10")
     ShopifyAPI::Base.activate_session(session)
     token = session.request_token(params)
     
@@ -84,11 +84,42 @@ class HomeController < ApplicationController
 
   @result = client.query(products)
 
-  @result.data.products.edges.each do |product| 
-    new_product = Product.new(title: product.node.title, shop_id: 1) 
+  # @result.data.products.edges.each do |product| 
+  #   new_product = Product.new(title: product.node.title, shop_id: 1) 
     
-    new_product.save  
-  end 
+  #   new_product.save  
+  # end 
+
+  # bulk operation
+
+  product_bulk = client.parse <<-'GRAPHQL'
+  mutation {
+    bulkOperationRunQuery(
+     query: """
+      {
+        products {
+          edges {
+            node {
+              id
+              title
+            }
+          }
+        }
+      }
+      """
+    ) {
+      bulkOperation {
+        id
+        status
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+  GRAPHQL
+  
 
   poll_status_query = client.parse <<-'GRAPHQL'
       query {
@@ -108,35 +139,27 @@ class HomeController < ApplicationController
 
   result_poll_status = client.query(poll_status_query)
     
-   
-  # images = []
-  #   products = []
+  url = result_poll_status.data.current_bulk_operation.url 
+  
+  @u = url
 
-  #   URI.open(result_poll_status.data.current_bulk_operation.url) do |f|
-  #     f.each do |line|
-  #       json = JSON.parse(line)
+    products = []
 
-  #       if json.key?('originalSrc') 
-  #         image_id = json['id'].delete('^0-9')
-  #         image_product_id = json['__parentId'].delete('^0-9')
-  #         image_url = json['originalSrc']
+    URI.open(url) do |f|
+      f.each do |line|
+        json = JSON.parse(line)
 
-  #         image = Image.new(shopify_image_id: image_id,                  
-  #                           shopify_image_product_id: image_product_id,
-  #                           url: image_url,
-  #                           shop_id: context.shop.id)
-  #         images << image
-  #       else
-  #         prodcut_id = json['id'].delete('^0-9')
-  #         prodcut_title = json['title']
+        product_id = json['id'].delete('^0-9')
+        product_title = json['title']
 
-  #         product = Product.new(title: prodcut_title,
-  #                              shopify_product_id: prodcut_id,
-  #                              shop_id: context.shop.id)
-  #         products << product
-  #       end
-  #     end
-  #   end
+        product = Product.new(title: product_title,
+                              shop_id: 1)
+        products << product
+
+        product.save
+        
+      end
+    end
 
    
 
