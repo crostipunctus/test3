@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_14_104558) do
+ActiveRecord::Schema.define(version: 2021_09_25_061135) do
+
+  create_table "products", force: :cascade do |t|
+    t.string "title"
+    t.integer "shop_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["shop_id"], name: "index_products_on_shop_id"
+  end
 
   create_table "shops", force: :cascade do |t|
     t.string "shopify_domain", null: false
@@ -21,4 +29,5 @@ ActiveRecord::Schema.define(version: 2021_09_14_104558) do
     t.index ["shopify_domain"], name: "index_shops_on_shopify_domain", unique: true
   end
 
+  add_foreign_key "products", "shops"
 end

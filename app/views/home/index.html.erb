@@ -9,23 +9,20 @@
   
  
 
-    <ul>
-      <% @products.each do |product| %>
-        <li><%= product.title %></li>
-      <% end %>
-    </ul>
-    <ul>
-      <% @customers.each do |customer| %>
-        <li><%= customer.first_name %></li>
-      <% end %>
-    </ul>
+   <h1>HELLO</h1>
 
     
-    <%= @result.data.customer_update.customer.id %>
+ 
 
     
-
-   
+    <%= @shop.data.shop.name %>
+  <ul>
+    <% @result.data.products.edges.each do |product| %>
+      <li><%= product.node.title %></li>
+      <li><%= product.node.price_range_v2.min_variant_price.amount %></li>
+      
+    <% end %>  
+  </ul>
   </body>
 </html>
 

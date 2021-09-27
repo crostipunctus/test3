@@ -13,7 +13,7 @@ Rails.application.configure do
     config.hosts
   rescue StandardError
     []
-  end  << "a4d9-106-51-105-245.ngrok.io"
+  end  << "6cdd-106-51-105-245.ngrok.io"
 
   # Do not eager load code on boot.
   config.eager_load = false
